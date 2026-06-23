@@ -24,10 +24,8 @@ export const Footer: React.FC<Props> = ({
         {notCompletedCount} items left
       </span>
 
-      {/* Active link should have the 'selected' class */}
       <Filter filter={filter} setFilter={setFilter} />
 
-      {/* this button should be disabled if there are no completed todos */}
       <button
         type="button"
         className="todoapp__clear-completed"

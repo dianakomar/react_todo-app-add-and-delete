@@ -14,5 +14,3 @@ export const deleteTodos = (todoId: number) => {
 export const addTodos = (todo: Omit<Todo, 'id'>): Promise<Todo> => {
   return client.post('/todos', todo);
 };
-
-// Add more methods here

@@ -7,16 +7,9 @@ import { Todo } from './types/Todo';
 import classNames from 'classnames';
 import { TodoList } from './components/TodoList';
 import { Footer } from './components/Footer';
+import { ErrorMessages } from './types/ErrorMessages';
 
 export type FilterType = 'All' | 'Active' | 'Completed';
-
-enum ErrorMessages {
-  LOAD = 'Unable to load todos',
-  ADD = 'Unable to add a todo',
-  DELETE = 'Unable to delete a todo',
-  UPDATE = 'Unable to update a todo',
-  TITLE = 'Title should not be empty',
-}
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -118,13 +111,14 @@ export const App: React.FC = () => {
       .filter(id => id !== null);
 
     setTodos(todos.filter(todo => !deletedIds.includes(todo.id)));
+
+    if (results.some(r => r.status === 'rejected')) {
+      showErrorMessage(ErrorMessages.DELETE);
+    }
+
     setTimeout(() => {
       newTodoField.current?.focus();
     }, 0);
-
-    if (results.some(r => r.status === 'rejected')) {
-      showErrorMessage('Unable to delete a todo');
-    }
   };
 
   return (
@@ -133,14 +127,12 @@ export const App: React.FC = () => {
 
       <div className="todoapp__content">
         <header className="todoapp__header">
-          {/* this button should have `active` class only if all todos are completed */}
           <button
             type="button"
             className={classNames('todoapp__toggle-all', 'active')}
             data-cy="ToggleAllButton"
           />
 
-          {/* Add a todo on form submit */}
           <form onSubmit={handleAdd}>
             <input
               data-cy="NewTodoField"
@@ -173,8 +165,6 @@ export const App: React.FC = () => {
         )}
       </div>
 
-      {/* DON'T use conditional rendering to hide the notification */}
-      {/* Add the 'hidden' class to hide the message smoothly */}
       <div
         data-cy="ErrorNotification"
         className={classNames(
